@@ -9,6 +9,13 @@ export default function Form(props) {
     Description: "",
   });
   const { firstName, lastName, Email, Description } = fullInput;
+  // Creating the state object for the file
+  const [file, setFile] = useState(null);
+  // Fybction to handle change of the file
+  const handleFileChange = (event) => {
+    const [file] = event.target.files;
+    setFile(file);
+  };
   // Function to handle the change of the input fields
   function handleChange(event) {
     const { name, value } = event.target;
@@ -22,13 +29,22 @@ export default function Form(props) {
   return (
     <form
       onSubmit={(event) => {
-        props.onSubmit(fullInput);
-        setFullInput({
-          firstName: "",
-          lastName: "",
-          Email: "",
-          Description: "",
-        });
+        if (
+          (!file.name.endsWith(".pdf") && !file.name.endsWith(".docx")) ||
+          file == null
+        ) {
+          alert("Please choose pdf or docx file");
+          setFile(null);
+        } else {
+          props.onSubmit(fullInput, file);
+          setFullInput({
+            firstName: "",
+            lastName: "",
+            Email: "",
+            Description: "",
+          });
+          setFile(null);
+        }
         event.preventDefault();
       }}
       className="form"
@@ -66,7 +82,12 @@ export default function Form(props) {
         value={Description}
         onChange={handleChange}
       ></textarea>
-      <input className="file-input" type="file" name="file"></input>
+      <input
+        onChange={handleFileChange}
+        className="file-input"
+        type="file"
+        name="file"
+      ></input>
       <button type="submit" className="btn">
         Submit
       </button>
