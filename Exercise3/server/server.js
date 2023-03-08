@@ -14,8 +14,20 @@ app.use(express.static("./candidates"));
 // variable to keep track of candidates number
 let candidateCount = 0;
 
+// Exposing the candidate route and set the informations about the candidates
+app.get("/candidate", (req, res) => {
+  let candidates = [];
+  for (let i = 0; i < candidateCount; i++) {
+    candidates.push(
+      JSON.parse(fs.readFileSync(`./candidates/candidate${i}.json`, "utf8"))
+    );
+  }
+  console.log(candidates);
+  res.json(candidates);
+});
+
 // The post route fetch data from the frontend and add them to the array of candidates
-app.post((req, res) => {
+app.post("/api", (req, res) => {
   // Writing informations about each candidate in a separate json file in the candidates directory
   fs.writeFile(
     `candidates/candidate${candidateCount++}.json`,
